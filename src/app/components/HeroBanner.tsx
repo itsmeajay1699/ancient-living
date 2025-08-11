@@ -39,7 +39,7 @@ const HeroBanner: React.FC = () => (
             <div key={item.id} className="carousel-slide">
                 <Link href={item.link} className="block relative">
                     <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full overflow-hidden">
-                        <Image
+                        <img
                             src={item.image}
                             alt={item.alt}
                             fill

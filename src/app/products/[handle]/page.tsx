@@ -97,7 +97,7 @@ export default function ProductPage() {
             {/* Image */}
             <div>
                 {product.thumbnail ? (
-                    <Image
+                    <img
                         src={product.thumbnail}
                         alt={product.title}
                         width={500}
