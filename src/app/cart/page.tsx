@@ -11,7 +11,7 @@ export default function CartPage() {
     const { cart, loading, updateItem, removeItem } = useCart()
 
     const hasItems = (cart?.items?.length || 0) > 0
-    const currency = (cart?.region?.currency_code || cart?.currency_code || "inr").toUpperCase()
+    const currency = (cart?.region?.currency_code || "inr").toUpperCase()
     const money = (n?: number) => (typeof n === "number" ? (n).toFixed(2) : "0.00")
 
     const itemCount = useMemo(

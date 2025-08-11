@@ -1,10 +1,13 @@
 "use client"
 import { useEffect, useState } from "react"
+import { useParams } from "next/navigation"
 import { medusa } from "@/lib/medusa"
 import ProductCard from "@/app/components/ProductCard"
 
 
-export default function CollectionPage({ params }: { params: { handle: string } }) {
+export default function CollectionPage() {
+    const params = useParams()
+    const handle = params.handle as string
     const [products, setProducts] = useState<any[]>([])
     const [filtered, setFiltered] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
@@ -17,7 +20,7 @@ export default function CollectionPage({ params }: { params: { handle: string } 
 
             try {
                 const { product_categories } = await medusa.productCategories.list()
-                const category = product_categories.find((c: any) => c.handle === params.handle)
+                const category = product_categories.find((c: any) => c.handle === handle)
 
                 if (!category) {
                     setProducts([])
@@ -55,7 +58,7 @@ export default function CollectionPage({ params }: { params: { handle: string } 
         }
 
         fetchProducts()
-    }, [params.handle])
+    }, [handle])
 
 
     useEffect(() => {
@@ -78,7 +81,7 @@ export default function CollectionPage({ params }: { params: { handle: string } 
 
     return (
         <div className="px-4 py-8 max-w-screen-xl mx-auto">
-            <h1 className="text-3xl font-bold mb-2 capitalize">{params.handle.replace("-", " ")}</h1>
+            <h1 className="text-3xl font-bold mb-2 capitalize">{handle.replace("-", " ")}</h1>
 
             <div className="mb-6 text-gray-600 text-sm max-w-2xl">
                 Showing {filtered.length} products
