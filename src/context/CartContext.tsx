@@ -2,6 +2,8 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
 import { medusa } from "@/lib/medusa"
+import { sdk } from "@/lib/medusa"
+import { DEFAULT_REGION_ID } from "@/config/constants"
 
 type CartItem = { id: string; title: string; quantity: number; unit_price: number; variant?: { id: string }; thumbnail?: string | null }
 type Cart = { id: string; items: CartItem[]; subtotal?: number; total?: number; region?: { currency_code: string } }
@@ -15,6 +17,8 @@ type Ctx = {
     updateItem: (line_id: string, quantity: number) => Promise<void>
     removeItem: (line_id: string) => Promise<void>
     refresh: () => Promise<void>
+    associateWithCustomer: (email: string) => Promise<void>
+    loadCustomerCart: (customerEmail: string) => Promise<void>
 }
 
 const CartContext = createContext<Ctx | null>(null)
@@ -33,7 +37,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         let id = cartId || (typeof window !== "undefined" ? localStorage.getItem("cart_id") : null)
         if (!id) {
             const { cart } = await medusa.carts.create({
-                region_id: "reg_01K21EN3X2RN3R54Q2H7CFCNXR",
+                // region_id: "reg_01K21EN3X2RN3R54Q2H7CFCNXR", // Old hardcoded region
+                region_id: DEFAULT_REGION_ID, // Centralized region configuration
             })
             id = cart.id
             localStorage.setItem("cart_id", id!)
@@ -88,9 +93,74 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         [cartId, refresh]
     )
 
+    const associateWithCustomer = useCallback(
+        async (email: string) => {
+            if (!cartId) return
+            try {
+                await medusa.carts.update(cartId, { email })
+                await refresh()
+                console.log("Cart associated with customer:", email)
+            } catch (error) {
+                console.error("Failed to associate cart with customer:", error)
+            }
+        },
+        [cartId, refresh]
+    )
+
+    const loadCustomerCart = useCallback(
+        async (customerEmail: string) => {
+            try {
+                console.log("Setting up customer cart for:", customerEmail)
+
+                // Get the current cart ID if it exists
+                const currentCartId = localStorage.getItem("cart_id")
+
+                if (currentCartId) {
+                    // If we have an existing cart, just associate it with the customer
+                    try {
+                        await medusa.carts.update(currentCartId, { email: customerEmail })
+                        await load(currentCartId)
+                        console.log("Associated existing cart with customer:", currentCartId)
+                        return
+                    } catch (error) {
+                        console.error("Failed to associate existing cart:", error)
+                    }
+                }
+
+                // If no existing cart or association failed, create a new one
+                const { cart: newCart } = await medusa.carts.create({
+                    // region_id: "reg_01K21EN3X2RN3R54Q2H7CFCNXR", // Old hardcoded region
+                    region_id: DEFAULT_REGION_ID, // Centralized region configuration
+                    email: customerEmail
+                })
+
+                if (newCart?.id) {
+                    setCartId(newCart.id)
+                    localStorage.setItem("cart_id", newCart.id)
+                    setCart(newCart as Cart)
+                    console.log("Created new customer cart:", newCart.id)
+                } else {
+                    throw new Error("Failed to create customer cart")
+                }
+
+            } catch (error) {
+                console.error("Failed to load customer cart:", error)
+                // Fallback: ensure we have a cart and associate it
+                try {
+                    const currentCartId = await ensureCart()
+                    await associateWithCustomer(customerEmail)
+                    console.log("Fallback: ensured cart and associated with customer")
+                } catch (fallbackError) {
+                    console.error("Fallback also failed:", fallbackError)
+                }
+            }
+        },
+        [ensureCart, associateWithCustomer, load]
+    )
+
     const value = useMemo(
-        () => ({ cart, cartId, loading, ensureCart, addItem, updateItem, removeItem, refresh }),
-        [cart, cartId, loading, ensureCart, addItem, updateItem, removeItem, refresh]
+        () => ({ cart, cartId, loading, ensureCart, addItem, updateItem, removeItem, refresh, associateWithCustomer, loadCustomerCart }),
+        [cart, cartId, loading, ensureCart, addItem, updateItem, removeItem, refresh, associateWithCustomer, loadCustomerCart]
     )
 
     return <CartContext.Provider value={value}>{children}</CartContext.Provider>

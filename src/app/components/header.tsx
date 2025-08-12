@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Menu, ShoppingCart, User, LogOut } from "lucide-react";
 import Link from "next/link";
-import { medusa } from "@/lib/medusa";
+import { medusa, sdk } from "@/lib/medusa";
 import CategoryMenu from "./CategoryMenu";
 import MaxContainer from "./MaxContainer";
 import { useCart } from "@/context/CartContext";
@@ -11,23 +11,55 @@ import { useCart } from "@/context/CartContext";
 interface Customer {
     id: string;
     email: string;
-    first_name?: string;
-    last_name?: string;
+    first_name?: string | null;
+    last_name?: string | null;
 }
 
 export default function Header() {
     const [showMobileMenu, setShowMobileMenu] = useState(false);
     const [customer, setCustomer] = useState<Customer | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const { associateWithCustomer } = useCart();
+
+    // Check localStorage on every render if customer is null (simple fallback)
+    useEffect(() => {
+        if (!customer && !isLoading) {
+            const storedCustomer = localStorage.getItem("customer");
+            if (storedCustomer) {
+                try {
+                    setCustomer(JSON.parse(storedCustomer));
+                } catch {
+                    localStorage.removeItem("customer");
+                }
+            }
+        }
+    }, [customer, isLoading]);
 
     // Fetch current session
     useEffect(() => {
         const fetchCustomer = async () => {
             try {
-                const { customer } = await medusa.auth.getSession();
-                setCustomer(customer);
+                // First try to get from SDK
+                const { customer } = await sdk.store.customer.retrieve();
+                setCustomer(customer || null);
+
+                // If successful, update localStorage
+                if (customer) {
+                    localStorage.setItem("customer", JSON.stringify(customer));
+                }
             } catch {
-                setCustomer(null);
+                // If SDK fails, try localStorage as fallback
+                const storedCustomer = localStorage.getItem("customer");
+                if (storedCustomer) {
+                    try {
+                        setCustomer(JSON.parse(storedCustomer));
+                    } catch {
+                        localStorage.removeItem("customer");
+                        setCustomer(null);
+                    }
+                } else {
+                    setCustomer(null);
+                }
             } finally {
                 setIsLoading(false);
             }
@@ -35,25 +67,79 @@ export default function Header() {
         fetchCustomer();
     }, []);
 
+    // Listen for storage changes (when user logs in/out in another tab or component)
+    useEffect(() => {
+        const handleStorageChange = (e: StorageEvent) => {
+            if (e.key === "customer") {
+                if (e.newValue) {
+                    try {
+                        setCustomer(JSON.parse(e.newValue));
+                    } catch {
+                        setCustomer(null);
+                    }
+                } else {
+                    setCustomer(null);
+                }
+            }
+        };
+
+        window.addEventListener("storage", handleStorageChange);
+        return () => window.removeEventListener("storage", handleStorageChange);
+    }, []);
+
+    // Listen for custom login events
+    useEffect(() => {
+        const handleCustomerLogin = (e: CustomEvent) => {
+            setCustomer(e.detail.customer);
+        };
+
+        const handleCustomerLogout = () => {
+            setCustomer(null);
+        };
+
+        window.addEventListener('customerLogin', handleCustomerLogin as EventListener);
+        window.addEventListener('customerLogout', handleCustomerLogout);
+
+        return () => {
+            window.removeEventListener('customerLogin', handleCustomerLogin as EventListener);
+            window.removeEventListener('customerLogout', handleCustomerLogout);
+        };
+    }, []);
+
     // ✅ Attach local cart to the logged-in customer so cart persists after login
     useEffect(() => {
         const attachLocalCartToCustomer = async () => {
             if (!customer?.email) return;
-            const cartId = typeof window !== "undefined" ? localStorage.getItem("cart_id") : null;
-            if (!cartId) return;
             try {
-                await medusa.carts.update(cartId, { email: customer.email });
-            } catch {
-                // ignore
+                await associateWithCustomer(customer.email);
+                console.log("Cart attached to customer from header");
+            } catch (error) {
+                console.error("Failed to attach cart to customer:", error);
             }
         };
         attachLocalCartToCustomer();
-    }, [customer]);
+    }, [customer, associateWithCustomer]);
 
     const handleLogout = async () => {
         try {
-            await medusa.auth.deleteSession();
+            await sdk.auth.logout();
             setCustomer(null);
+            localStorage.removeItem("customer");
+
+            // Remove customer email from cart but keep the cart and items
+            const cartId = localStorage.getItem("cart_id");
+            if (cartId) {
+                try {
+                    await medusa.carts.update(cartId, { email: null });
+                    console.log("Removed customer association from cart");
+                } catch (cartError) {
+                    console.log("Could not remove customer from cart:", cartError);
+                }
+            }
+
+            // Trigger custom event
+            window.dispatchEvent(new CustomEvent('customerLogout'));
+
             window.location.href = "/";
         } catch (error) {
             console.error("Logout failed:", error);

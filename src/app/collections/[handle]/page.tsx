@@ -3,6 +3,8 @@ import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import { medusa } from "@/lib/medusa"
 import ProductCard from "@/app/components/ProductCard"
+import { DEFAULT_REGION_ID } from "@/config/constants"
+import { fixMedusaUrl } from "@/lib/utils"
 
 
 export default function CollectionPage() {
@@ -42,7 +44,8 @@ export default function CollectionPage() {
                 console.log(categoryIds[0], "categoryIds")
                 const { products } = await medusa.products.list({
                     category_id: categoryIds[0],
-                    region_id: "reg_01K21EN3X2RN3R54Q2H7CFCNXR",
+                    // region_id: "reg_01K21EN3X2RN3R54Q2H7CFCNXR", // Old hardcoded region
+                    region_id: DEFAULT_REGION_ID, // Centralized region configuration
                 })
 
                 setProducts(products)
@@ -121,7 +124,7 @@ export default function CollectionPage() {
                             product={{
                                 id: product.id,
                                 title: product.title,
-                                thumbnail: product.thumbnail || product.images[0]?.url,
+                                thumbnail: fixMedusaUrl(product.thumbnail || product.images[0]?.url),
                                 price: product.variants[0]?.calculated_price?.calculated_amount ?? 0
                             }}
                         />

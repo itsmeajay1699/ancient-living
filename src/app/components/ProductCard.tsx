@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import { fixMedusaUrl } from '@/lib/utils'
 
 const ProductCard = ({ product }: any) => {
     const { id, title, thumbnail, price } = product
@@ -8,7 +9,7 @@ const ProductCard = ({ product }: any) => {
         <Link href={`/products/${id}`} className="border border-gray-200 rounded-lg p-4 shadow-sm">
             {thumbnail && (
                 <img
-                    src={thumbnail}
+                    src={fixMedusaUrl(thumbnail)}
                     alt={product.title}
                     width={266}
                     height={188}

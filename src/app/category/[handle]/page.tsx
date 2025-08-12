@@ -4,9 +4,12 @@ import { useEffect, useMemo, useState } from "react"
 import { useParams } from "next/navigation"
 import { medusa } from "@/lib/medusa"
 import ProductCard from "@/app/components/ProductCard"
+import { DEFAULT_REGION_ID } from "@/config/constants"
+import { fixMedusaUrl } from "@/lib/utils"
 
 // set your region once
-const REGION_ID = "reg_01K21EN3X2RN3R54Q2H7CFCNXR"
+// const REGION_ID = "reg_01K21EN3X2RN3R54Q2H7CFCNXR" // Old local constant
+const REGION_ID = DEFAULT_REGION_ID // Use centralized region configuration
 
 export default function CategoryPage() {
     const { handle } = useParams()
@@ -99,7 +102,7 @@ export default function CategoryPage() {
                             product={{
                                 id: p.id,
                                 title: p.title,
-                                thumbnail: p.thumbnail || p.images?.[0]?.url,
+                                thumbnail: fixMedusaUrl(p.thumbnail || p.images?.[0]?.url),
                                 price: getPrice(p),
                             }}
                         />

@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 import { medusa } from "@/lib/medusa"
 import Image from "next/image"
 import Link from "next/link"
+import { fixMedusaUrl } from "@/lib/utils"
 
 export default function CategoryGrid() {
     const { data, isLoading } = useQuery({
@@ -25,7 +26,7 @@ export default function CategoryGrid() {
             ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {parentCategories?.map((cat: any) => {
-                        const imageUrl = cat.metadata?.image
+                        const imageUrl = fixMedusaUrl(cat.metadata?.image)
 
                         return (
                             <Link

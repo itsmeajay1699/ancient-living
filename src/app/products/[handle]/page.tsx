@@ -2,9 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
-import Image from "next/image"
 import { medusa } from "@/lib/medusa"
 import { useCart } from "@/context/CartContext"
+import { DEFAULT_REGION_ID, COUNTRY_CODE } from "@/config/constants"
+import { fixMedusaUrl } from "@/lib/utils"
 
 export default function ProductPage() {
     const { handle } = useParams()
@@ -28,8 +29,10 @@ export default function ProductPage() {
 
                 try {
                     const { product } = await medusa.products.retrieve(idOrHandle, {
-                        region_id: "reg_01K21EN3X2RN3R54Q2H7CFCNXR",
-                        country_code: "in"
+                        // region_id: "reg_01K21EN3X2RN3R54Q2H7CFCNXR", // Old hardcoded region
+                        region_id: DEFAULT_REGION_ID, // Centralized region configuration
+                        // country_code: "in" // Old hardcoded country
+                        country_code: COUNTRY_CODE // Centralized country configuration
                     })
                     prod = product
                 } catch {
@@ -98,7 +101,7 @@ export default function ProductPage() {
             <div>
                 {product.thumbnail ? (
                     <img
-                        src={product.thumbnail}
+                        src={fixMedusaUrl(product.thumbnail)}
                         alt={product.title}
                         width={500}
                         height={500}

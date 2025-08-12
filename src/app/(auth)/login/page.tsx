@@ -2,25 +2,63 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { medusa } from "@/lib/medusa"
+import { sdk } from "@/lib/medusa"
+import { useCart } from "@/context/CartContext"
 import Link from "next/link"
 
 export default function LoginPage() {
     const router = useRouter()
+    const { associateWithCustomer } = useCart()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
+    const [loading, setLoading] = useState(false)
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
         setError("")
+        setLoading(true)
 
         try {
-            const cust = await medusa.auth.authenticate({ email, password })
-            localStorage.setItem("customer", JSON.stringify(cust))
-            router.push("/")
+            // Use the new SDK for authentication
+            const response = await sdk.auth.login("customer", "emailpass", {
+                email,
+                password,
+            })
+
+            if (response) {
+                // Get customer information after login
+                const { customer } = await sdk.store.customer.retrieve()
+
+                if (customer) {
+                    // Store customer data
+                    localStorage.setItem("customer", JSON.stringify(customer))
+
+                    // Associate the existing cart with the customer (preserves items)
+                    try {
+                        await associateWithCustomer(customer.email)
+                        console.log("Cart successfully associated with customer")
+                    } catch (cartError) {
+                        console.log("Cart association failed:", cartError)
+                    }
+
+                    // Trigger a custom event to notify other components
+                    window.dispatchEvent(new CustomEvent('customerLogin', {
+                        detail: { customer }
+                    }))
+
+                    router.push("/")
+                } else {
+                    setError("Login successful but could not retrieve customer data")
+                }
+            } else {
+                setError("Login failed. Please check your credentials.")
+            }
         } catch (err: any) {
-            setError("Invalid email or password")
+            console.error("Login error:", err)
+            setError(err.message || "Invalid email or password")
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -56,9 +94,10 @@ export default function LoginPage() {
                 <div className="flex items-center justify-between">
                     <button
                         type="submit"
-                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm"
+                        disabled={loading}
+                        className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-4 py-2 rounded text-sm"
                     >
-                        Sign in
+                        {loading ? "Signing in..." : "Sign in"}
                     </button>
 
                     <div className="text-sm text-right">

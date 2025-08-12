@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useCart } from "@/context/CartContext"
 import { useMemo } from "react"
+import { fixMedusaUrl } from "@/lib/utils"
 
 export default function CartPage() {
     const router = useRouter()
@@ -38,7 +39,7 @@ export default function CartPage() {
                             <li key={item.id} className="p-4 flex items-center gap-4">
                                 {item.thumbnail ? (
                                     <img
-                                        src={item.thumbnail}
+                                        src={fixMedusaUrl(item.thumbnail)}
                                         alt={item.title}
                                         width={72}
                                         height={72}

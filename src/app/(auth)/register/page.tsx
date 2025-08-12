@@ -2,32 +2,75 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { medusa } from "@/lib/medusa"
+import { sdk } from "@/lib/medusa"
+import { useCart } from "@/context/CartContext"
 import Link from "next/link"
 
 export default function RegisterPage() {
     const router = useRouter()
+    const { associateWithCustomer } = useCart()
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
+    const [loading, setLoading] = useState(false)
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault()
         setError("")
+        setLoading(true)
+
+        if (!firstName || !lastName || !email || !password) {
+            setError("Please fill in all fields")
+            setLoading(false)
+            return
+        }
 
         try {
-            await medusa.customers.create({
+            // Step 1: Register with email/password to get registration token
+            await sdk.auth.register("customer", "emailpass", {
                 email,
                 password,
+            })
+        } catch (error: any) {
+            // Check if it's an existing identity error
+            if (error.message?.includes("Identity with email already exists")) {
+                try {
+                    // Try to login with existing credentials
+                    await sdk.auth.login("customer", "emailpass", {
+                        email,
+                        password,
+                    })
+                } catch (loginError: any) {
+                    setError("Email already exists with different password")
+                    setLoading(false)
+                    return
+                }
+            } else {
+                setError(error.message || "Registration failed")
+                setLoading(false)
+                return
+            }
+        }
+
+        try {
+            // Step 2: Create customer with the authentication token
+            const { customer } = await sdk.store.customer.create({
                 first_name: firstName,
                 last_name: lastName,
+                email,
             })
 
-            router.push("/login")
-        } catch (err) {
-            setError("Account creation failed. Try another email.")
+            if (customer) {
+                // Registration successful, redirect to login
+                router.push("/login?message=Registration successful! Please log in.")
+            }
+        } catch (err: any) {
+            console.error("Customer creation error:", err)
+            setError(err.message || "Account creation failed. Please try again.")
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -81,9 +124,10 @@ export default function RegisterPage() {
                 <div className="flex items-center justify-between">
                     <button
                         type="submit"
-                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm"
+                        disabled={loading}
+                        className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-4 py-2 rounded text-sm"
                     >
-                        Create
+                        {loading ? "Creating..." : "Create"}
                     </button>
 
                     <p className="text-sm">

@@ -5,8 +5,11 @@ import Image from "next/image"
 import Link from "next/link"
 import { medusa } from "@/lib/medusa"
 import { useCart } from "@/context/CartContext"
+import { DEFAULT_REGION_ID } from "@/config/constants"
+import { fixMedusaUrl } from "@/lib/utils"
 
-const REGION_ID = "reg_01K21EN3X2RN3R54Q2H7CFCNXR" // change if needed
+// const REGION_ID = "reg_01K21EN3X2RN3R54Q2H7CFCNXR" // Old local constant
+const REGION_ID = DEFAULT_REGION_ID // Use centralized region configuration
 
 type Prod = {
     id: string
@@ -82,7 +85,7 @@ export default function OurProducts() {
                     <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {products.map((p) => {
                             const price = firstPrice(p)
-                            const img = p.thumbnail || p.images?.[0]?.url || ""
+                            const img = fixMedusaUrl(p.thumbnail || p.images?.[0]?.url || "")
                             return (
                                 <div
                                     key={p.id}

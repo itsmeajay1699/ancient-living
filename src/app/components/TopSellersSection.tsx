@@ -6,6 +6,8 @@ import { medusa } from "@/lib/medusa"
 import Image from "next/image"
 import Link from "next/link"
 import ProductCard from "./ProductCard"
+import { DEFAULT_REGION_ID } from "@/config/constants"
+import { fixMedusaUrl } from "@/lib/utils"
 
 export default function TopSellersSection() {
 
@@ -21,7 +23,8 @@ export default function TopSellersSection() {
 
             const productsRes = await medusa.products.list({
                 collection_id: [topSellers.id],
-                region_id: "reg_01K21EN3X2RN3R54Q2H7CFCNXR",
+                // region_id: "reg_01K21EN3X2RN3R54Q2H7CFCNXR", // Old hardcoded region
+                region_id: DEFAULT_REGION_ID, // Centralized region configuration
                 limit: 4
             })
             return productsRes.products
@@ -36,7 +39,7 @@ export default function TopSellersSection() {
             ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {data?.map((product: any) => {
-                        const thumbnail = product.thumbnail || product.images[0]?.url
+                        const thumbnail = fixMedusaUrl(product.thumbnail || product.images[0]?.url)
                         const price = product.variants[0]?.calculated_price?.calculated_amount ?? 0
 
                         return (
