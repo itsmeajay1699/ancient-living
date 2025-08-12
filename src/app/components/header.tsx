@@ -63,56 +63,60 @@ export default function Header() {
     const toggleMobileMenu = () => setShowMobileMenu((prev) => !prev);
 
     return (
-        <header className="bg-white shadow-sm border-b sticky top-0 z-50">
-            <MaxContainer>
-                {/* Main Header */}
-                <div className="flex items-center justify-between py-4">
-                    {/* Logo */}
-                    <Link href="/" className="flex items-center">
-                        <h1 className="text-2xl font-bold text-gray-900 hover:text-gray-700 transition-colors">
-                            Ancient Living
-                        </h1>
-                    </Link>
+        <>
+            {/* Main Header - Scrollable */}
+            <header className="bg-white shadow-sm border-b border-[#C65242]">
+                <MaxContainer>
+                    <div className="flex items-center justify-between py-4 ">
+                        {/* Logo */}
+                        <Link href="/" className="flex items-center">
+                            <img
+                                className="h-[57px] w-[171px] object-contain"
+                                src="https://botanicalbloom.in/images/logo.png" alt="" />
+                        </Link>
 
-                    {/* Desktop Navigation */}
-                    <nav className="hidden md:flex items-center space-x-8">
-                        <UserSection customer={customer} isLoading={isLoading} onLogout={handleLogout} />
-                        <CartIcon />
-                    </nav>
+                        {/* Desktop Navigation */}
+                        <nav className="hidden md:flex items-center space-x-8">
+                            <UserSection customer={customer} isLoading={isLoading} onLogout={handleLogout} />
+                            <CartIcon />
+                        </nav>
 
-                    {/* Mobile Menu Button */}
-                    <button
-                        onClick={toggleMobileMenu}
-                        className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                        aria-label="Toggle menu"
-                    >
-                        <Menu className="w-6 h-6" />
-                    </button>
-                </div>
+                        {/* Mobile Menu Button */}
+                        <button
+                            onClick={toggleMobileMenu}
+                            className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                            aria-label="Toggle menu"
+                        >
+                            <Menu className="w-6 h-6" />
+                        </button>
+                    </div>
+                </MaxContainer>
 
-                {/* Desktop Category Menu */}
-                <div className="hidden md:block border-t border-gray-100">
-                    <CategoryMenu />
-                </div>
-            </MaxContainer>
-
-            {/* Mobile Menu */}
-            {showMobileMenu && (
-                <div className="md:hidden border-t border-gray-100 bg-white">
-                    <MaxContainer>
-                        <div className="py-4 space-y-4">
-                            <MobileUserSection customer={customer} isLoading={isLoading} onLogout={handleLogout} />
-                            {/* Mobile cart shortcut */}
-                            <div className="flex items-center justify-between">
-                                <span className="text-sm font-medium text-gray-700">Your cart</span>
-                                <CartIcon />
+                {/* Mobile Menu */}
+                {showMobileMenu && (
+                    <div className="md:hidden border-t border-gray-100 bg-white">
+                        <MaxContainer>
+                            <div className="py-4 space-y-4">
+                                <MobileUserSection customer={customer} isLoading={isLoading} onLogout={handleLogout} />
+                                {/* Mobile cart shortcut */}
+                                <div className="flex items-center justify-between">
+                                    <span className="text-sm font-medium text-gray-700">Your cart</span>
+                                    <CartIcon />
+                                </div>
+                                <CategoryMenu />
                             </div>
-                            <CategoryMenu />
-                        </div>
-                    </MaxContainer>
-                </div>
-            )}
-        </header>
+                        </MaxContainer>
+                    </div>
+                )}
+            </header>
+
+            {/* Sticky Category Menu - Desktop only */}
+            <div className="hidden md:block sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
+                <MaxContainer>
+                    <CategoryMenu />
+                </MaxContainer>
+            </div>
+        </>
     );
 }
 

@@ -10,9 +10,9 @@ const ProductCard = ({ product }: any) => {
                 <img
                     src={thumbnail}
                     alt={product.title}
-                    width={300}
-                    height={300}
-                    className="w-full h-auto object-cover rounded"
+                    width={266}
+                    height={188}
+                    className="w-[266px] h-[188px] object-contain rounded"
                 />
             )}
             <h3 className="font-semibold mt-3">{product.title}</h3>

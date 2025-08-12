@@ -23,7 +23,7 @@ const carouselItems: CarouselItem[] = [
     },
     {
         id: 2,
-        image: '/images/healthy-care.webp',
+        image: '/images/heal.webp',
         alt: 'Healthy Care Products',
         link: '/collections/healthy-care',
         title: 'Healthy Care Collection'
@@ -37,13 +37,13 @@ const HeroBanner: React.FC = () => (
     >
         {carouselItems.map((item) => (
             <div key={item.id} className="carousel-slide">
-                <Link href={item.link} className="block relative">
+                <Link href={""} className="block relative">
                     <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full overflow-hidden">
                         <Image
                             src={item.image}
                             alt={item.alt}
                             fill
-                            className="object-cover transition-transform duration-300 hover:scale-105"
+                            className="object-fill md:object-cover transition-transform duration-300 hover:scale-105"
                             priority={item.id === 1}
                         />
                     </div>

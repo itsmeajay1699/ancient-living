@@ -29,7 +29,6 @@ export default function CollectionPage() {
                 }
 
                 const categoryIds = [category.id]
-
                 const collectChildIds = (cat: any) => {
                     if (cat.category_children) {
                         cat.category_children.forEach((child: any) => {
@@ -40,9 +39,9 @@ export default function CollectionPage() {
                 }
 
                 collectChildIds(category)
-
+                console.log(categoryIds[0], "categoryIds")
                 const { products } = await medusa.products.list({
-                    category_id: categoryIds,
+                    category_id: categoryIds[0],
                     region_id: "reg_01K21EN3X2RN3R54Q2H7CFCNXR",
                 })
 
@@ -98,7 +97,7 @@ export default function CollectionPage() {
                     In stock only
                 </label> */}
 
-                <select
+                {/* <select
                     value={sort}
                     onChange={(e) => setSort(e.target.value)}
                     className="border px-2 py-1 text-sm"
@@ -106,7 +105,7 @@ export default function CollectionPage() {
                     <option value="featured">Sort by: Featured</option>
                     <option value="price-low">Price: Low to High</option>
                     <option value="price-high">Price: High to Low</option>
-                </select>
+                </select> */}
             </div>
 
             {/* Product Grid */}

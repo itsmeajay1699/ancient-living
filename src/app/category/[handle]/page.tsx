@@ -1,109 +1,80 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useParams } from "next/navigation"
 import { medusa } from "@/lib/medusa"
 import ProductCard from "@/app/components/ProductCard"
 
+// set your region once
+const REGION_ID = "reg_01K21EN3X2RN3R54Q2H7CFCNXR"
+
 export default function CategoryPage() {
     const { handle } = useParams()
     const [products, setProducts] = useState<any[]>([])
-    const [filtered, setFiltered] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
-    const [inStockOnly, setInStockOnly] = useState(false)
     const [sort, setSort] = useState("featured")
 
     useEffect(() => {
-        const fetchProducts = async () => {
+        const load = async () => {
             setLoading(true)
             try {
-                const { product_categories } = await medusa.productCategories.retrieve(handle as string);
-                const parent = product_categories.find((c: any) => c.handle === handle)
-
-                if (!parent) {
-                    setProducts([])
-                    setFiltered([])
-                    return
-                }
-
-                // Get all children IDs
-                const childCategoryIds = parent.category_children?.map((c: any) => c.id) || []
-
-                if (childCategoryIds.length === 0) {
-                    setProducts([])
-                    setFiltered([])
-                    return
-                }
-
+                // 3) fetch products in those categories (region for pricing)
                 const { products } = await medusa.products.list({
-                    category_id: childCategoryIds,
-                    region_id: "reg_01K21EN3X2RN3R54Q2H7CFCNXR",
+                    category_id: handle,
+                    region_id: REGION_ID,
+                    limit: 60,
                 })
-
                 setProducts(products)
-                setFiltered(products)
-            } catch (error) {
-                console.error("Category fetch error:", error)
+            } catch (e) {
+                console.error("Category fetch error:", e)
                 setProducts([])
-                setFiltered([])
             } finally {
                 setLoading(false)
             }
         }
 
-        fetchProducts()
+        if (handle) load()
     }, [handle])
 
-    // Filtering & Sorting
-    useEffect(() => {
-        let result = [...products]
+    // Helper: get lowest calculated price for a product (NO divide by 100)
+    const getPrice = (p: any): number => {
+        const amounts =
+            p?.variants?.map(
+                (v: any) =>
+                    v?.calculated_price?.calculated_amount ??
+                    v?.prices?.[0]?.amount ??
+                    0
+            ) || []
+        return amounts.length ? Math.min(...amounts) : 0
+    }
 
-        if (inStockOnly) {
-            result = result.filter((p) =>
-                p.variants.some((v: any) => v.inventory_quantity > 0)
-            )
-        }
-
+    const sorted = useMemo(() => {
+        const arr = [...products]
         if (sort === "price-low") {
-            result.sort(
-                (a, b) =>
-                    a.variants[0]?.prices[0]?.amount - b.variants[0]?.prices[0]?.amount
-            )
+            arr.sort((a, b) => getPrice(a) - getPrice(b))
         } else if (sort === "price-high") {
-            result.sort(
-                (a, b) =>
-                    b.variants[0]?.prices[0]?.amount - a.variants[0]?.prices[0]?.amount
-            )
+            arr.sort((a, b) => getPrice(b) - getPrice(a))
         }
+        return arr
+    }, [products, sort])
 
-        setFiltered(result)
-    }, [inStockOnly, sort, products])
+    const title =
+        typeof handle === "string"
+            ? handle.replace(/-/g, " ")
+            : Array.isArray(handle)
+                ? handle.join(" ").replace(/-/g, " ")
+                : ""
 
     return (
         <div className="px-4 py-8 max-w-screen-xl mx-auto">
-            <h1 className="text-3xl font-bold mb-2 capitalize">
-                {typeof handle === "string"
-                    ? handle.replace(/-/g, " ")
-                    : Array.isArray(handle)
-                        ? handle.join(" ").replace(/-/g, " ")
-                        : ""}
-            </h1>
+            <h1 className="text-3xl font-bold mb-2 capitalize">{title}</h1>
 
             <div className="mb-6 text-gray-600 text-sm max-w-2xl">
-                Showing {filtered.length} products
+                Showing {sorted.length} products
             </div>
 
-            {/* Filters */}
-            <div className="flex justify-between items-center mb-6">
-                {/* <label className="flex items-center gap-2 text-sm">
-                    <input
-                        type="checkbox"
-                        checked={inStockOnly}
-                        onChange={(e) => setInStockOnly(e.target.checked)}
-                    />
-                    In stock only
-                </label> */}
-
+            {/* Controls */}
+            {/* <div className="flex justify-between items-center mb-6">
                 <select
                     value={sort}
                     onChange={(e) => setSort(e.target.value)}
@@ -113,23 +84,23 @@ export default function CategoryPage() {
                     <option value="price-low">Price: Low to High</option>
                     <option value="price-high">Price: High to Low</option>
                 </select>
-            </div>
+            </div> */}
 
-            {/* Product Grid */}
+            {/* Grid */}
             {loading ? (
                 <p>Loading...</p>
-            ) : filtered.length === 0 ? (
+            ) : sorted.length === 0 ? (
                 <p>No products found.</p>
             ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {filtered.map((product) => (
+                    {sorted.map((p) => (
                         <ProductCard
-                            key={product.id}
+                            key={p.id}
                             product={{
-                                id: product.id,
-                                title: product.title,
-                                thumbnail: product.thumbnail || product.images?.[0]?.url,
-                                price: product.variants?.[0]?.calculated_price?.calculated_amount ?? 0
+                                id: p.id,
+                                title: p.title,
+                                thumbnail: p.thumbnail || p.images?.[0]?.url,
+                                price: getPrice(p),
                             }}
                         />
                     ))}
