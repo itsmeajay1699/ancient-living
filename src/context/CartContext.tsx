@@ -66,8 +66,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         const { cart: retrievedCart } = await medusa.carts.retrieve(id);
 
         // 4. If the user is logged in but the cart isn't associated, update it.
-        if (customer && retrievedCart.customer_id !== customer.id) {
-            await medusa.carts.update(id, { customer_id: customer.id });
+        if (customer && retrievedCart.email !== customer.email) {
+            await medusa.carts.update(id, { email: customer.email });
         }
 
         if (id !== cartId) setCartId(id);
