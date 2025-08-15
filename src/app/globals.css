@@ -1,6 +1,52 @@
 @import "tailwindcss";
 
-
 body {
     background-color: #FFFAF8;
+}
+
+/* Marquee Animations for AnnouncementStrip */
+@keyframes scroll-left {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes scroll-right {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+/* Animation Classes */
+.animate-scroll-left {
+    animation: scroll-left linear infinite;
+}
+
+.animate-scroll-right {
+    animation: scroll-right linear infinite;
+}
+
+.animate-scroll-slow {
+    animation-duration: 60s;
+}
+
+.animate-scroll-medium {
+    animation-duration: 30s;
+}
+
+.animate-scroll-fast {
+    animation-duration: 15s;
+}
+
+/* Pause on hover */
+.hover\:pause:hover {
+    animation-play-state: paused;
 }

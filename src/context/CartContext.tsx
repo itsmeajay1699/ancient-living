@@ -17,6 +17,7 @@ type Ctx = {
     updateItem: (line_id: string, quantity: number) => Promise<void>
     removeItem: (line_id: string) => Promise<void>
     refresh: () => Promise<void>
+    clearCart: () => void
     associateWithCustomer: (email: string) => Promise<void>
     loadCustomerCart: (customerEmail: string) => Promise<void>
 }
@@ -37,8 +38,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         let id = cartId || (typeof window !== "undefined" ? localStorage.getItem("cart_id") : null)
         if (!id) {
             const { cart } = await medusa.carts.create({
-                // region_id: "reg_01K21EN3X2RN3R54Q2H7CFCNXR", // Old hardcoded region
-                region_id: DEFAULT_REGION_ID, // Centralized region configuration
+                region_id: DEFAULT_REGION_ID,
             })
             id = cart.id
             localStorage.setItem("cart_id", id!)
@@ -65,6 +65,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         if (!cartId) return
         await load(cartId)
     }, [cartId, load])
+
+    const clearCart = useCallback(() => {
+        setCartId(null)
+        setCart(null)
+        localStorage.removeItem("cart_id")
+        console.log("Cart cleared successfully")
+    }, [])
 
     const addItem = useCallback(
         async (variant_id: string, quantity = 1, metadata?: Record<string, any>) => {
@@ -159,8 +166,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     )
 
     const value = useMemo(
-        () => ({ cart, cartId, loading, ensureCart, addItem, updateItem, removeItem, refresh, associateWithCustomer, loadCustomerCart }),
-        [cart, cartId, loading, ensureCart, addItem, updateItem, removeItem, refresh, associateWithCustomer, loadCustomerCart]
+        () => ({ cart, cartId, loading, ensureCart, addItem, updateItem, removeItem, refresh, clearCart, associateWithCustomer, loadCustomerCart }),
+        [cart, cartId, loading, ensureCart, addItem, updateItem, removeItem, refresh, clearCart, associateWithCustomer, loadCustomerCart]
     )
 
     return <CartContext.Provider value={value}>{children}</CartContext.Provider>

@@ -29,10 +29,8 @@ export default function ProductPage() {
 
                 try {
                     const { product } = await medusa.products.retrieve(idOrHandle, {
-                        // region_id: "reg_01K21EN3X2RN3R54Q2H7CFCNXR", // Old hardcoded region
-                        region_id: DEFAULT_REGION_ID, // Centralized region configuration
-                        // country_code: "in" // Old hardcoded country
-                        country_code: COUNTRY_CODE // Centralized country configuration
+                        region_id: DEFAULT_REGION_ID,
+                        country_code: COUNTRY_CODE
                     })
                     prod = product
                 } catch {
@@ -84,126 +82,130 @@ export default function ProductPage() {
     }
 
     const onBuyNow = async () => {
+        if (!selectedVariant?.id || !inStock) return;
         await onAddToCart()
         router.push("/checkout")
     }
 
-    if (loading) return <p className="p-4">Loading...</p>
-    if (error) return <p className="p-4 text-red-600">{error}</p>
-    if (!product) return <p className="p-4">Not found</p>
+    if (loading) {
+        return <div className="flex justify-center items-center h-96"><p>Loading product...</p></div>
+    }
+    if (error) {
+        return <div className="flex justify-center items-center h-96"><p className="text-red-600">{error}</p></div>
+    }
+    if (!product) {
+        return <div className="flex justify-center items-center h-96"><p>Product not found.</p></div>
+    }
 
-
-    console.log(product.variants, "hello world");
+    // Helper to format metadata keys into titles (e.g., "how_to_apply" -> "How To Apply")
+    const formatMetadataTitle = (key: string) => {
+        return key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+    };
 
     return (
-        <div className="max-w-6xl mx-auto p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Image */}
-            <div>
-                {product.thumbnail ? (
-                    <img
-                        src={fixMedusaUrl(product.thumbnail)}
-                        alt={product.title}
-                        width={500}
-                        height={500}
-                        className="rounded shadow"
-                    />
-                ) : (
-                    <div className="w-full aspect-square bg-gray-100 rounded" />
-                )}
-            </div>
-
-            {/* Info */}
-            <div>
-                <h1 className="text-2xl font-bold mb-2">{product.title}</h1>
-
-                {/* Variant selector (shown only if multiple variants) */}
-                {product.variants?.length > 1 && (
-                    <div className="mb-3">
-                        <label className="block text-sm font-medium mb-1">Variant</label>
-                        <select
-                            value={selectedVariant?.id || ""}
-                            onChange={(e) => {
-                                const v = product.variants.find((x: any) => x.id === e.target.value) || null
-                                setSelectedVariant(v)
-                            }}
-                            className="border rounded px-3 py-2"
-                        >
-                            {product.variants.map((v: any) => (
-                                <option key={v.id} value={v.id}>
-                                    {v.title || v.id}
-                                </option>
-                            ))}
-                        </select>
+        <div className="bg-stone-50 font-light">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <div className="grid md:grid-cols-2 gap-12 items-start">
+                    {/* Image Gallery */}
+                    <div className="p-4 bg-white rounded-lg shadow-sm sticky top-24">
+                        <div className="w-full aspect-square relative overflow-hidden rounded-lg">
+                            {product.thumbnail ? (
+                                <img
+                                    src={fixMedusaUrl(product.thumbnail)}
+                                    alt={product.title}
+                                    className="w-full h-full object-cover object-center"
+                                />
+                            ) : (
+                                <div className="w-full h-full bg-gray-100" />
+                            )}
+                        </div>
                     </div>
-                )}
 
-                <p className="text-xl font-semibold text-green-700 mb-4">
-                    {priceInfo.currency} {priceInfo.display}
-                </p>
+                    {/* Product Info */}
+                    <div className="space-y-6">
+                        <h1 className="text-4xl font-serif text-gray-800">{product.title}</h1>
 
-                {/* Quantity Selector */}
-                <div className="flex items-center mb-4">
-                    <button onClick={() => setQuantity((q) => Math.max(1, q - 1))} className="border px-3">
-                        −
-                    </button>
-                    <input
-                        type="number"
-                        className="w-14 text-center border-y"
-                        value={quantity}
-                        onChange={(e) => {
-                            const n = Number(e.target.value)
-                            setQuantity(Number.isFinite(n) ? Math.max(1, n) : 1)
-                        }}
-                    />
-                    <button onClick={() => setQuantity((q) => q + 1)} className="border px-3">
-                        +
-                    </button>
+                        <p className="text-3xl font-medium text-[#C75545]">
+                            {priceInfo.currency} {priceInfo.display}
+                        </p>
+
+                        {product.variants?.length > 1 && (
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Select Variant</label>
+                                <select
+                                    value={selectedVariant?.id || ""}
+                                    onChange={(e) => {
+                                        const v = product.variants.find((x: any) => x.id === e.target.value) || null
+                                        setSelectedVariant(v)
+                                    }}
+                                    className="w-full border-gray-300 rounded-md shadow-sm focus:ring-[#C75545] focus:border-[#C75545]"
+                                >
+                                    {product.variants.map((v: any) => (
+                                        <option key={v.id} value={v.id}>
+                                            {v.title || v.id}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
+
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center border border-gray-300 rounded-md">
+                                <button onClick={() => setQuantity((q) => Math.max(1, q - 1))} className="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-l-md">
+                                    −
+                                </button>
+                                <input
+                                    type="number"
+                                    className="w-14 text-center border-x border-gray-300 focus:ring-0 focus:border-gray-300"
+                                    value={quantity}
+                                    onChange={(e) => {
+                                        const n = Number(e.target.value)
+                                        setQuantity(Number.isFinite(n) ? Math.max(1, n) : 1)
+                                    }}
+                                />
+                                <button onClick={() => setQuantity((q) => q + 1)} className="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-r-md">
+                                    +
+                                </button>
+                            </div>
+                            <button
+                                onClick={onAddToCart}
+                                disabled={!inStock || adding || !selectedVariant?.id}
+                                className="flex-1 bg-[#C75545] text-white px-6 py-2.5 rounded-md hover:bg-[#b34a3a] transition-colors duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                            >
+                                {adding ? "Adding…" : inStock ? "Add to Cart" : "Out of Stock"}
+                            </button>
+                        </div>
+
+                        <button
+                            onClick={onBuyNow}
+                            disabled={!inStock || adding || !selectedVariant?.id}
+                            className="w-full bg-gray-800 text-white px-6 py-2.5 rounded-md hover:bg-gray-700 transition-colors duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                        >
+                            Buy It Now
+                        </button>
+
+                        {/* Description */}
+                        <div className="pt-6">
+                            <h2 className="text-xl font-medium text-gray-900 mb-2">Description</h2>
+                            <p className="text-gray-600 leading-relaxed font-medium">{product.description}</p>
+                        </div>
+
+                        {/* Dynamic Metadata Accordion */}
+                        <div className="pt-6 space-y-2">
+                            {product.metadata && Object.keys(product.metadata).map((key) => (
+                                <details key={key} className="group border-b border-gray-200">
+                                    <summary className="flex justify-between items-center w-full py-4 font-medium text-left cursor-pointer list-none">
+                                        <span>{formatMetadataTitle(key)}</span>
+                                        <span className="text-gray-500 group-open:rotate-90 transition-transform duration-200">+</span>
+                                    </summary>
+                                    <div className="pb-4 text-gray-600">
+                                        {String(product.metadata[key])}
+                                    </div>
+                                </details>
+                            ))}
+                        </div>
+                    </div>
                 </div>
-
-                {/* Buttons */}
-                <div className="flex gap-4 mb-6">
-                    <button
-                        onClick={onAddToCart}
-                        disabled={!inStock || adding || !selectedVariant?.id}
-                        className="bg-gray-600 text-white px-4 py-2 rounded disabled:opacity-60"
-                    >
-                        {adding ? "Adding…" : inStock ? "Add to cart" : "Out of stock"}
-                    </button>
-                    <button
-                        onClick={onBuyNow}
-                        disabled={!inStock || adding || !selectedVariant?.id}
-                        className="bg-green-600 text-white px-4 py-2 rounded disabled:opacity-60"
-                    >
-                        Buy it now
-                    </button>
-                </div>
-
-                {/* Collapsibles */}
-                <details className="mb-2">
-                    <summary className="font-medium cursor-pointer">Description</summary>
-                    <p className="text-sm mt-2">{product.description}</p>
-                </details>
-
-                {product.metadata?.ingredients && (
-                    <details className="mb-2">
-                        <summary className="font-medium cursor-pointer">Ingredients</summary>
-                        <p className="text-sm mt-2">{product.metadata.ingredients}</p>
-                    </details>
-                )}
-
-                {product.metadata?.benefits && (
-                    <details className="mb-2">
-                        <summary className="font-medium cursor-pointer">Benefits</summary>
-                        <p className="text-sm mt-2">{product.metadata.benefits}</p>
-                    </details>
-                )}
-
-                {product.metadata?.how_to_apply && (
-                    <details className="mb-2">
-                        <summary className="font-medium cursor-pointer">How To Apply</summary>
-                        <p className="text-sm mt-2">{product.metadata.how_to_apply}</p>
-                    </details>
-                )}
             </div>
         </div>
     )

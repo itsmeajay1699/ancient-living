@@ -23,8 +23,7 @@ export default function TopSellersSection() {
 
             const productsRes = await medusa.products.list({
                 collection_id: [topSellers.id],
-                // region_id: "reg_01K21EN3X2RN3R54Q2H7CFCNXR", // Old hardcoded region
-                region_id: DEFAULT_REGION_ID, // Centralized region configuration
+                region_id: DEFAULT_REGION_ID,
                 limit: 4
             })
             return productsRes.products

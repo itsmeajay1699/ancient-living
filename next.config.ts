@@ -15,6 +15,12 @@ const nextConfig: NextConfig = {
         hostname: 'res.cloudinary.com',
         pathname: '/dnxpltrja/image/upload/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'medusa-backend-qjok.onrender.com',
+        port: '',
+        pathname: '/static/**',
+      },
     ],
   },
   // Disable TypeScript and ESLint errors for deployment

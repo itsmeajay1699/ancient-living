@@ -8,7 +8,7 @@ import Link from "next/link"
 
 export default function LoginPage() {
     const router = useRouter()
-    const { associateWithCustomer } = useCart()
+    const { associateWithCustomer, loadCustomerCart } = useCart()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
@@ -33,15 +33,13 @@ export default function LoginPage() {
                 if (customer) {
                     // Store customer data
                     localStorage.setItem("customer", JSON.stringify(customer))
-
-                    // Associate the existing cart with the customer (preserves items)
+                    // Always load or create customer cart after login
                     try {
-                        await associateWithCustomer(customer.email)
-                        console.log("Cart successfully associated with customer")
+                        await loadCustomerCart(customer.email)
+                        console.log("Customer cart loaded and associated after login")
                     } catch (cartError) {
-                        console.log("Cart association failed:", cartError)
+                        console.log("Customer cart setup failed:", cartError)
                     }
-
                     // Trigger a custom event to notify other components
                     window.dispatchEvent(new CustomEvent('customerLogin', {
                         detail: { customer }

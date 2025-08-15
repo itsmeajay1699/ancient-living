@@ -16,14 +16,13 @@ export default function CategoryPage() {
     const [products, setProducts] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
     const [sort, setSort] = useState("featured")
-
     useEffect(() => {
         const load = async () => {
             setLoading(true)
             try {
                 // 3) fetch products in those categories (region for pricing)
                 const { products } = await medusa.products.list({
-                    category_id: handle,
+                    category_id: Array.isArray(handle) ? handle[1] : undefined,
                     region_id: REGION_ID,
                     limit: 60,
                 })
@@ -42,12 +41,8 @@ export default function CategoryPage() {
     // Helper: get lowest calculated price for a product (NO divide by 100)
     const getPrice = (p: any): number => {
         const amounts =
-            p?.variants?.map(
-                (v: any) =>
-                    v?.calculated_price?.calculated_amount ??
-                    v?.prices?.[0]?.amount ??
-                    0
-            ) || []
+            p?.variants?.map((v: any) => v?.calculated_price?.original_amount) || []
+        console.log(amounts)
         return amounts.length ? Math.min(...amounts) : 0
     }
 
@@ -61,12 +56,7 @@ export default function CategoryPage() {
         return arr
     }, [products, sort])
 
-    const title =
-        typeof handle === "string"
-            ? handle.replace(/-/g, " ")
-            : Array.isArray(handle)
-                ? handle.join(" ").replace(/-/g, " ")
-                : ""
+    const title = handle && handle[0] ? handle[0].replace(/-/g, " ") : ""
 
     return (
         <div className="px-4 py-8 max-w-screen-xl mx-auto">
@@ -75,19 +65,6 @@ export default function CategoryPage() {
             <div className="mb-6 text-gray-600 text-sm max-w-2xl">
                 Showing {sorted.length} products
             </div>
-
-            {/* Controls */}
-            {/* <div className="flex justify-between items-center mb-6">
-                <select
-                    value={sort}
-                    onChange={(e) => setSort(e.target.value)}
-                    className="border px-2 py-1 text-sm"
-                >
-                    <option value="featured">Sort by: Featured</option>
-                    <option value="price-low">Price: Low to High</option>
-                    <option value="price-high">Price: High to Low</option>
-                </select>
-            </div> */}
 
             {/* Grid */}
             {loading ? (
