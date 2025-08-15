@@ -19,11 +19,11 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({
     onCompleteOrder,
 }) => {
     const paymentOptions = [
-        {
-            id: "pp_razorpay_razorpay" as PaymentMethod,
-            title: "Cards, UPI, NB, Wallets, BNPL (Razorpay India)",
-            description: "After clicking \"Pay now\", you'll be redirected to Razorpay to complete your purchase.",
-        },
+        // {
+        //     id: "pp_razorpay_razorpay" as PaymentMethod,
+        //     title: "Cards, UPI, NB, Wallets, BNPL (Razorpay India)",
+        //     description: "After clicking \"Pay now\", you'll be redirected to Razorpay to complete your purchase.",
+        // },
         {
             id: "pp_system_default" as PaymentMethod,
             title: "Cash on Delivery / Default",
