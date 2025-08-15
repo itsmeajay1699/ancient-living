@@ -52,7 +52,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             // If the user is logged in, associate the cart with them from the start.
             const { cart: newCart } = await medusa.carts.create({
                 region_id: DEFAULT_REGION_ID,
-                ...(customer ? { customer_id: customer.id } : {}),
+                ...(customer ? { email: customer.email } : {}),
             });
             id = newCart.id;
             localStorage.setItem("cart_id", id!);

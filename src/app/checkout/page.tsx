@@ -15,12 +15,13 @@ import AddressSection from './components/AddressSection'
 import ShippingSection from './components/ShippingSection'
 import PaymentSection from './components/PaymentSection'
 import OrderSummary from './components/OrderSummary'
-import OrderSuccess from './components/OrderSuccess'
+import OrderSuccess from "../components/OrderSuccess"
 import EmptyCart from './components/EmptyCart'
 
 // Import types
 import { Address, PaymentMethod } from './types/index'
 import { REGION_ID } from "@/config/constants"
+import { useRouter } from "next/navigation"
 
 export default function CheckoutPage() {
     const { cart, cartId, loading, refresh, clearCart } = useCart()
@@ -43,6 +44,8 @@ export default function CheckoutPage() {
         phone: "",
     })
     const [saveToAccount, setSaveToAccount] = useState(true)
+
+    const router = useRouter()
 
     // Shipping state
     const [shippingOptions, setShippingOptions] = useState<Array<{ id: string; name: string; amount?: number }>>([])
@@ -195,6 +198,10 @@ export default function CheckoutPage() {
             if (orderResponse.type === "order") {
                 console.log("Order completed successfully!")
                 setOrderId(orderResponse.order.id)
+
+                console.log("Redirecting to order confirmation page...")
+
+                router.push(`/order/confirmed/${orderResponse.order.id}`);
 
                 // Clear the cart completely - this will remove cartId, cart data, and localStorage
                 clearCart()
