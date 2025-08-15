@@ -7,9 +7,11 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useCart } from '@/context/CartContext';
 import { medusa, sdk } from '@/lib/medusa';
 import { Address, ShippingOption, PaymentMethod, CartTotals } from '../types/index';
+import { useRouter } from 'next/navigation';
 
 export const useCheckout = () => {
     const { cart, cartId, loading, refresh } = useCart();
+    const router = useRouter();
 
     // Contact Information
     const [customerEmail, setCustomerEmail] = useState("");
@@ -280,8 +282,11 @@ export const useCheckout = () => {
             const { type, data } = await medusa.carts.complete(cartId);
 
             if (type === "order") {
-                setOrderId((data as any).id);
+                const order = data as any;
+                setOrderId(order.id);
                 localStorage.removeItem("cart_id");
+                // Redirect to a success page with order ID
+                router.push(`/order/confirmed/${order.id}`);
             } else {
                 // Handle redirect flow for some payment providers
                 const redirectUrl = (data as any)?.payment_session?.data?.redirect_url;
@@ -289,7 +294,10 @@ export const useCheckout = () => {
                     window.location.href = redirectUrl;
                     return;
                 }
-                setError("Payment requires redirection. Please continue in the opened window.");
+                // If no redirect, but also not an order, something is off
+                // but we can still redirect to a generic success page
+                // to avoid showing an empty cart.
+                router.push(`/order/confirmed/`);
             }
         } catch (error: any) {
             console.error("Order completion failed:", error);
@@ -301,6 +309,8 @@ export const useCheckout = () => {
                     setOrderId(tempOrderId);
                     localStorage.removeItem("cart_id");
                     console.log("Manual order created with temporary ID:", tempOrderId);
+                    // Redirect on manual/COD success
+                    router.push(`/order/confirmed/${tempOrderId}`);
                 } catch {
                     setError("Failed to complete manual order. Please try again.");
                 }
@@ -321,6 +331,7 @@ export const useCheckout = () => {
         saveNewAddressToAccount,
         initializePaymentSessions,
         setPaymentSession,
+        router, // Add router to dependency array
     ]);
 
     return {

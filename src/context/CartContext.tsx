@@ -35,21 +35,45 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }, [])
 
     const ensureCart = useCallback(async () => {
-        let id = cartId || (typeof window !== "undefined" ? localStorage.getItem("cart_id") : null)
+        let id = cartId || (typeof window !== "undefined" ? localStorage.getItem("cart_id") : null);
+
+        // 1. Check for a logged-in customer
+        let customer;
+        try {
+            const { customer: retrievedCustomer } = await sdk.store.customer.retrieve();
+            customer = retrievedCustomer;
+        } catch (e) {
+            // Not logged in, proceed as guest
+            customer = null;
+        }
+
         if (!id) {
-            const { cart } = await medusa.carts.create({
+            // 2. If no cart exists, create one.
+            // If the user is logged in, associate the cart with them from the start.
+            const { cart: newCart } = await medusa.carts.create({
                 region_id: DEFAULT_REGION_ID,
-            })
-            id = cart.id
-            localStorage.setItem("cart_id", id!)
+                ...(customer ? { customer_id: customer.id } : {}),
+            });
+            id = newCart.id;
+            localStorage.setItem("cart_id", id!);
         }
+
         if (!id) {
-            throw new Error("Failed to create or retrieve cart id")
+            throw new Error("Failed to create or retrieve cart id");
         }
-        if (id !== cartId) setCartId(id)
-        await load(id)
-        return id
-    }, [cartId, load])
+
+        // 3. Load the cart and check for association
+        const { cart: retrievedCart } = await medusa.carts.retrieve(id);
+
+        // 4. If the user is logged in but the cart isn't associated, update it.
+        if (customer && retrievedCart.customer_id !== customer.id) {
+            await medusa.carts.update(id, { customer_id: customer.id });
+        }
+
+        if (id !== cartId) setCartId(id);
+        setCart(retrievedCart as Cart);
+        return id;
+    }, [cartId]);
 
     useEffect(() => {
         ; (async () => {

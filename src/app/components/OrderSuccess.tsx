@@ -59,12 +59,6 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({ orderId }) => {
                 >
                     Continue Shopping
                 </a>
-                <a
-                    href="/account/orders"
-                    className="inline-block border border-gray-300 text-gray-700 px-6 py-3 rounded font-medium hover:bg-gray-50 transition-colors"
-                >
-                    View Order Details
-                </a>
             </div>
         </div>
     );

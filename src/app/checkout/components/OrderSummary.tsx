@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { CartTotals } from '../types/index';
+import { fixMedusaUrl } from '@/lib/utils';
 
 interface OrderSummaryProps {
     cart: any; // Use proper cart type from your context
@@ -24,7 +25,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ cart, currency, totals }) =
                         <div key={item.id} className="flex items-center gap-3">
                             {item.thumbnail && (
                                 <img
-                                    src={item.thumbnail}
+                                    src={fixMedusaUrl(item.thumbnail)}
                                     alt={item.title}
                                     className="w-12 h-12 object-cover rounded"
                                 />
