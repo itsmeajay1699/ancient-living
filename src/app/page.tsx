@@ -17,10 +17,10 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-medium text-gray-800 tracking-wide">
-              About <span className="font-serif font-medium text-[#C75545]">Botanical Bloom</span>
+              About <span className="font-medium text-[#C75545]">Botanical Bloom</span>
             </h2>
             <div className="w-20 h-0.5 bg-gradient-to-r from-[#C75545] to-[#D17B6F] mx-auto mt-6 mb-4"></div>
-            <p className="text-lg text-gray-600 font-medium max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg text-black font-semibold max-w-3xl mx-auto leading-relaxed">
               Rediscovering the wisdom of nature through time-honored traditions and conscious living.
             </p>
           </div>

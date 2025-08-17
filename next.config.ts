@@ -21,6 +21,7 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/static/**',
       },
+      { protocol: 'https', hostname: 'vizitorv2.s3.us-east-1.amazonaws.com', pathname: '/**' },
     ],
   },
   // Disable TypeScript and ESLint errors for deployment

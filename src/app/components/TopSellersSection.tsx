@@ -7,7 +7,6 @@ import Image from "next/image"
 import Link from "next/link"
 import ProductCard from "./ProductCard"
 import { DEFAULT_REGION_ID } from "@/config/constants"
-import { fixMedusaUrl } from "@/lib/utils"
 
 export default function TopSellersSection() {
 
@@ -31,28 +30,20 @@ export default function TopSellersSection() {
     })
 
     return (
-        <section className="mt-12">
-            <h2 className="text-2xl font-bold mb-6">Top Sellers</h2>
+        <section className="py-24 px-6">
+            <div className="text-center mb-16">
+                <h2 className="text-4xl md:text-5xl font-light text-gray-800 tracking-wide">
+                    Our <span className="font-medium text-[#C75545]">Top Sellers</span>
+                </h2>
+                <div className="w-20 h-0.5 bg-gradient-to-r from-[#C75545] to-[#D17B6F] mx-auto mt-6"></div>
+            </div>
             {isLoading ? (
-                <p>Loading products...</p>
+                <p className="text-center">Loading top sellers...</p>
             ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {data?.map((product: any) => {
-                        const thumbnail = fixMedusaUrl(product.thumbnail || product.images[0]?.url)
-                        const price = product.variants[0]?.calculated_price?.calculated_amount ?? 0
-
-                        return (
-                            <ProductCard
-                                key={product.id}
-                                product={{
-                                    id: product.id,
-                                    title: product.title,
-                                    thumbnail,
-                                    price
-                                }}
-                            />
-                        )
-                    })}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {data?.map((product: any) => (
+                        <ProductCard key={product.id} product={product} />
+                    ))}
                 </div>
             )}
         </section>

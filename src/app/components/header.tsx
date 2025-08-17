@@ -157,7 +157,6 @@ export default function Header() {
             {/* Announcement Strip */}
             <div className="sticky top-0 z-50 bg-white">
                 <AnnouncementStrip
-                    announcements={["7 Day Delivery", "Free Shipping", "100% Indian Human Hair"]}
                     speed="medium"
                     direction="left"
                     backgroundColor="#F8F3EE"

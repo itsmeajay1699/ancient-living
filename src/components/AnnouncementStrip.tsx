@@ -18,9 +18,11 @@ interface AnnouncementStripProps {
 
 const AnnouncementStrip: React.FC<AnnouncementStripProps> = ({
     announcements = [
-        "7 Day Delivery",
-        "Free Shipping",
-        "100% Indian Human Hair"
+        "🌱 From Nature to Your Home",
+        "🪵 Pure Neem Wood Essentials",
+        "💚 Made with Love & Care",
+        "🌿 Natural Care, No Chemicals",
+        "🚚 Fast & Reliable Delivery"
     ],
     speed = 'medium',
     direction = 'left',

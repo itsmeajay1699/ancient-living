@@ -5,7 +5,6 @@ import { useParams } from "next/navigation"
 import { medusa } from "@/lib/medusa"
 import ProductCard from "@/app/components/ProductCard"
 import { DEFAULT_REGION_ID } from "@/config/constants"
-import { fixMedusaUrl } from "@/lib/utils"
 
 // set your region once
 // const REGION_ID = "reg_01K21EN3X2RN3R54Q2H7CFCNXR" // Old local constant
@@ -79,7 +78,7 @@ export default function CategoryPage() {
                             product={{
                                 id: p.id,
                                 title: p.title,
-                                thumbnail: fixMedusaUrl(p.thumbnail || p.images?.[0]?.url),
+                                thumbnail: p.thumbnail || p.images?.[0]?.url,
                                 price: getPrice(p),
                             }}
                         />

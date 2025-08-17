@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation"
 import { medusa } from "@/lib/medusa"
 import { useCart } from "@/context/CartContext"
 import { DEFAULT_REGION_ID, COUNTRY_CODE } from "@/config/constants"
-import { fixMedusaUrl } from "@/lib/utils"
+import Image from "next/image"
 
 export default function ProductPage() {
     const { handle } = useParams()
@@ -24,13 +24,14 @@ export default function ProductPage() {
             setLoading(true)
             setError(null)
             try {
-                const idOrHandle = String(handle)
+                const idOrHandle = handle && handle[0] ? String(handle[0]) : ""
                 let prod: any | null = null
 
                 try {
                     const { product } = await medusa.products.retrieve(idOrHandle, {
                         region_id: DEFAULT_REGION_ID,
-                        country_code: COUNTRY_CODE
+                        country_code: COUNTRY_CODE,
+                        expand: "variants",
                     })
                     prod = product
                 } catch {
@@ -60,9 +61,10 @@ export default function ProductPage() {
     }, [handle])
 
     const priceInfo = useMemo(() => {
+        console.log(selectedVariant, "hello world");
         const amount = selectedVariant?.prices?.[0]?.amount ?? 100
         const currency = (selectedVariant?.prices?.[0]?.currency_code ?? "inr").toUpperCase()
-        return { amount, currency, display: `${(amount).toFixed(2)}` }
+        return { amount, currency, display: `${(amount / 100).toFixed(2)}` }
     }, [selectedVariant])
 
     const inStock = useMemo(() => {
@@ -110,9 +112,10 @@ export default function ProductPage() {
                     <div className="p-4 bg-white rounded-lg shadow-sm sticky top-24">
                         <div className="w-full aspect-square relative overflow-hidden rounded-lg">
                             {product.thumbnail ? (
-                                <img
-                                    src={fixMedusaUrl(product.thumbnail)}
+                                <Image
+                                    src={product.thumbnail}
                                     alt={product.title}
+                                    fill
                                     className="w-full h-full object-cover object-center"
                                 />
                             ) : (
@@ -126,7 +129,7 @@ export default function ProductPage() {
                         <h1 className="text-4xl font-serif text-gray-800">{product.title}</h1>
 
                         <p className="text-3xl font-medium text-[#C75545]">
-                            {priceInfo.currency} {priceInfo.display}
+                            {priceInfo.currency} {Array.isArray(handle) && handle[1] ? (Number(handle[1]) / 100) : ""}
                         </p>
 
                         {product.variants?.length > 1 && (

@@ -3,7 +3,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useCart } from "@/context/CartContext"
 import { useMemo } from "react"
-import { fixMedusaUrl } from "@/lib/utils"
+import Image from "next/image"
 
 export default function CartPage() {
     const router = useRouter()
@@ -11,7 +11,7 @@ export default function CartPage() {
 
     const hasItems = (cart?.items?.length || 0) > 0
     const currency = (cart?.region?.currency_code || "inr").toUpperCase()
-    const money = (n?: number) => (typeof n === "number" ? (n).toFixed(2) : "0.00")
+    const money = (n?: number) => (typeof n === "number" ? (n / 100).toFixed(2) : "0.00")
 
     const itemCount = useMemo(
         () => cart?.items?.reduce((s, i) => s + (i.quantity || 0), 0) ?? 0,
@@ -46,9 +46,10 @@ export default function CartPage() {
                                 <div key={item.id} className="flex items-center gap-4 border-b border-gray-200 pb-4 last:border-b-0">
                                     <div className="w-20 h-20 relative flex-shrink-0">
                                         {item.thumbnail ? (
-                                            <img
-                                                src={fixMedusaUrl(item.thumbnail)}
+                                            <Image
+                                                src={item.thumbnail}
                                                 alt={item.title}
+                                                fill
                                                 className="w-full h-full object-cover rounded-md"
                                             />
                                         ) : (

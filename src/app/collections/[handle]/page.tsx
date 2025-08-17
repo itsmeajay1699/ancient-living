@@ -4,7 +4,6 @@ import { useParams } from "next/navigation"
 import { medusa } from "@/lib/medusa"
 import ProductCard from "@/app/components/ProductCard"
 import { DEFAULT_REGION_ID } from "@/config/constants"
-import { fixMedusaUrl } from "@/lib/utils"
 
 
 export default function CollectionPage() {
@@ -124,7 +123,7 @@ export default function CollectionPage() {
                             product={{
                                 id: product.id,
                                 title: product.title,
-                                thumbnail: fixMedusaUrl(product.thumbnail || product.images[0]?.url),
+                                thumbnail: product.thumbnail || product.images[0]?.url,
                                 price: product.variants[0]?.calculated_price?.calculated_amount ?? 0
                             }}
                         />

@@ -9,7 +9,7 @@ type CartItem = { id: string; title: string; quantity: number; unit_price: numbe
 type Cart = { id: string; items: CartItem[]; subtotal?: number; total?: number; region?: { currency_code: string } }
 
 type Ctx = {
-    cart: Cart | null
+    cart: any | null
     cartId: string | null
     loading: boolean
     ensureCart: () => Promise<string>

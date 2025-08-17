@@ -30,7 +30,7 @@ const WhyChooseUs = () => {
             <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-16">
                     <h2 className="text-4xl md:text-5xl font-light text-gray-800 tracking-wide">
-                        Why <span className="font-serif font-medium text-[#C75545]">Choose Us</span>
+                        Why <span className="font-medium text-[#C75545]">Choose Us</span>
                     </h2>
                     <div className="w-20 h-0.5 bg-gradient-to-r from-[#C75545] to-[#D17B6F] mx-auto mt-6"></div>
                 </div>

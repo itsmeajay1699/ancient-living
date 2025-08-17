@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { CartTotals } from '../types/index';
-import { fixMedusaUrl } from '@/lib/utils';
+import Image from 'next/image';
 
 interface OrderSummaryProps {
     cart: any; // Use proper cart type from your context
@@ -24,9 +24,11 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ cart, currency, totals }) =
                     {cart.items.map((item: any) => (
                         <div key={item.id} className="flex items-center gap-3">
                             {item.thumbnail && (
-                                <img
-                                    src={fixMedusaUrl(item.thumbnail)}
+                                <Image
+                                    src={item.thumbnail}
                                     alt={item.title}
+                                    width={48}
+                                    height={48}
                                     className="w-12 h-12 object-cover rounded"
                                 />
                             )}
@@ -39,7 +41,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ cart, currency, totals }) =
                                 </div>
                             </div>
                             <div className="text-sm font-medium">
-                                {currency} {((item.total || 0) / 100).toFixed(2)}
+                                {currency} {((item.quantity * item.unit_price || 0) / 100).toFixed(2)}
                             </div>
                         </div>
                     ))}

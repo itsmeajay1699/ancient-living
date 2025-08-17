@@ -1,21 +1,24 @@
 import React from 'react'
 import Link from 'next/link'
-import { fixMedusaUrl } from '@/lib/utils'
+import Image from 'next/image'
 
 const ProductCard = ({ product }: any) => {
     // Default to an empty object to avoid errors if product is null/undefined
-    const { id, title, thumbnail, price } = product || {};
+    const { id, title, thumbnail } = product || {};
+
+    const priceInfo = product?.variants?.[0]?.calculated_price?.original_amount
 
     return (
         <div className="group relative flex flex-col overflow-hidden bg-white rounded-lg shadow-sm hover:shadow-xl transition-shadow duration-300">
-            <Link href={`/products/${id}`} className="block">
+            <Link href={`/products/${id}/${priceInfo}`} className="block">
                 <div className="relative overflow-hidden">
-                    <div className="w-full h-64 bg-gray-100">
+                    <div className="w-full h-64 bg-gray-100 relative">
                         {thumbnail && (
-                            <img
-                                src={fixMedusaUrl(thumbnail)}
-                                alt={title}
-                                className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                            <Image
+                                src={thumbnail}
+                                alt={title || 'Product image'}
+                                fill
+                                className="object-cover object-center transition-transform duration-300 group-hover:scale-105"
                             />
                         )}
                     </div>
@@ -25,7 +28,7 @@ const ProductCard = ({ product }: any) => {
                         {title}
                     </h3>
                     <p className="mt-2 text-base font-medium text-gray-900">
-                        {price ? `₹${(price).toFixed(2)}` : 'N/A'}
+                        {priceInfo ? `₹${(priceInfo / 100).toFixed(2)}` : 'N/A'}
                     </p>
                 </div>
             </Link>
