@@ -18,7 +18,7 @@ export default function ProductPage() {
     const [loading, setLoading] = useState(true)
     const [adding, setAdding] = useState(false)
     const [error, setError] = useState<string | null>(null)
-
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
     useEffect(() => {
         const fetchProduct = async () => {
             setLoading(true)
@@ -47,6 +47,9 @@ export default function ProductPage() {
                 } else {
                     setProduct(prod)
                     setSelectedVariant(prod.variants?.[0] ?? null)
+                    if (prod.images && prod.images.length > 0) {
+                        setSelectedImage(prod.images[0].url);
+                    }
                 }
             } catch (e: any) {
                 setError(e?.message || "Failed to load product.")
@@ -110,10 +113,10 @@ export default function ProductPage() {
                 <div className="grid md:grid-cols-2 gap-12 items-start">
                     {/* Image Gallery */}
                     <div className="p-4 bg-white rounded-lg shadow-sm sticky top-24">
-                        <div className="w-full aspect-square relative overflow-hidden rounded-lg">
-                            {product.thumbnail ? (
+                        <div className="w-full aspect-square relative overflow-hidden rounded-lg mb-4">
+                            {selectedImage ? (
                                 <Image
-                                    src={product.thumbnail}
+                                    src={selectedImage}
                                     alt={product.title}
                                     fill
                                     className="w-full h-full object-cover object-center"
@@ -121,6 +124,23 @@ export default function ProductPage() {
                             ) : (
                                 <div className="w-full h-full bg-gray-100" />
                             )}
+                        </div>
+                        <div className="grid grid-cols-5 gap-2">
+                            {product.images?.map((img: any) => (
+                                <div
+                                    key={img.id}
+                                    className={`w-full aspect-square relative overflow-hidden rounded-md cursor-pointer border-2 ${selectedImage === img.url ? 'border-[#C75545]' : 'border-transparent'
+                                        }`}
+                                    onMouseEnter={() => setSelectedImage(img.url)}
+                                >
+                                    <Image
+                                        src={img.url}
+                                        alt={`${product.title} thumbnail`}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+                            ))}
                         </div>
                     </div>
 
