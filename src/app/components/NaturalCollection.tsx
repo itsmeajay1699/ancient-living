@@ -13,7 +13,7 @@ const CARDS: Card[] = [
         title: "Eco- Lifestyle",
         desc:
             "Simple objects made meaningful. Our lifestyle range turns everyday habits into mindful rituals, helping you slow down and savor the small moments.",
-        img: "https://botanicalbloom.in/images/Eco-Lifestyle.svg",
+        img: "/images/collection_one.png",
         href: "/collections/eco-lifestyle",
     },
     {
@@ -45,9 +45,8 @@ export default function NaturalCollection() {
 
                 <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
                     {CARDS.map((c) => (
-                        <a
+                        <div
                             key={c.title}
-                            href={c.href || "#"}
                             className="group rounded-2xl bg-white shadow-md hover:shadow-lg transition-shadow overflow-hidden"
                         >
                             <div className="relative w-full h-56 md:h-64">
@@ -69,7 +68,7 @@ export default function NaturalCollection() {
                                     {c.desc}
                                 </p>
                             </div>
-                        </a>
+                        </div>
                     ))}
                 </div>
             </div>
