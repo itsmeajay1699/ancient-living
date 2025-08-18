@@ -3,8 +3,6 @@
 
 import { useQuery } from "@tanstack/react-query"
 import { medusa } from "@/lib/medusa"
-import Image from "next/image"
-import Link from "next/link"
 import ProductCard from "./ProductCard"
 import { DEFAULT_REGION_ID } from "@/config/constants"
 
@@ -30,7 +28,7 @@ export default function TopSellersSection() {
     })
 
     return (
-        <section className="py-24 px-6">
+        <section id="top-sellers" className="py-24 px-6">
             <div className="text-center mb-16">
                 <h2 className="text-4xl md:text-5xl font-light text-gray-800 tracking-wide">
                     Our <span className="font-medium text-[#C75545]">Top Sellers</span>

@@ -18,7 +18,7 @@ export default function CategoryGrid() {
     );
 
     return (
-        <section className="py-24 px-6 bg-stone-50">
+        <section id="categories" className="py-24 px-6 bg-stone-50">
             <div className="text-center mb-16">
                 <h2 className="text-4xl md:text-5xl font-light text-gray-800 tracking-wide">
                     Shop by <span className="font-serif font-medium text-[#C75545]">Category</span>

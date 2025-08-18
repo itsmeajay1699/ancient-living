@@ -49,7 +49,7 @@ const AnnouncementStrip: React.FC<AnnouncementStripProps> = ({
                 {duplicatedAnnouncements.map((announcement, index) => (
                     <React.Fragment key={index}>
                         <div
-                            className="flex-shrink-0 px-4 text-sm font-medium flex items-center"
+                            className="flex-shrink-0 px-4 text-sm font-bold flex items-center"
                             role="region"
                             aria-label="Announcement"
                         >
