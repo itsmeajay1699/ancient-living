@@ -31,13 +31,13 @@ const carouselItems: CarouselItem[] = [
 ];
 
 const HeroBanner: React.FC = () => (
-    <div className="relative h-[400px] md:h-[500px] lg:h-[100dvh] w-full overflow-hidden">
+    <div className="relative h-[400px] md:h-[500px] lg:h-[60dvh] w-full overflow-hidden">
         <video
             autoPlay
             loop
             muted
             playsInline
-            className="absolute top-0 left-0 w-full h-full object-cover"
+            className="absolute top-0 left-0 w-full h-full object-fill"
             src="https://dgaqwe1r16p4i.cloudfront.net/presale/botanical_output.mp4"
         >
             Your browser does not support the video tag.
