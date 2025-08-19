@@ -104,7 +104,7 @@ export default function Header() {
 
     return (
         <>
-            <header className="bg-white shadow-sm border-b border-[#C65242]">
+            <header className="bg-white">
                 <MaxContainer>
                     <div className="flex items-center justify-between py-4">
                         {/* Logo */}
@@ -117,7 +117,7 @@ export default function Header() {
                         </Link>
 
                         {/* Desktop Navigation */}
-                        <nav className="hidden md:flex items-center space-x-8">
+                        <nav className="hidden md:flex items-center space-x-6">
                             <UserSection customer={customer} isLoading={isLoading} onLogout={handleLogout} />
                             <CartIcon />
                         </nav>
@@ -128,14 +128,14 @@ export default function Header() {
                             className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
                             aria-label="Toggle menu"
                         >
-                            <Menu className="w-6 h-6" />
+                            <Menu className="w-6 h-6 text-black" />
                         </button>
                     </div>
                 </MaxContainer>
 
                 {/* Mobile Menu */}
                 {showMobileMenu && (
-                    <div className="md:hidden border-t border-gray-100 bg-white">
+                    <div className="md:hidden bg-white">
                         <MaxContainer>
                             <div className="py-4 space-y-4">
                                 <UserSection
@@ -145,7 +145,7 @@ export default function Header() {
                                     isMobile
                                 />
                                 <div className="flex items-center justify-between">
-                                    <span className="text-sm font-medium text-gray-700">Your cart</span>
+                                    <span className="text-sm font-medium text-black">Your cart</span>
                                     <CartIcon />
                                 </div>
                             </div>
@@ -193,7 +193,7 @@ function UserSection({
         return (
             <div className={containerClass}>
                 <div className="flex items-center space-x-2">
-                    <User className="w-5 h-5 text-gray-600" />
+                    <User className="w-6 h-6 text-gray-800" />
                     <div className="text-sm">
                         <p className="font-medium text-gray-900">
                             {customer.first_name || customer.email}
@@ -202,9 +202,9 @@ function UserSection({
                 </div>
                 <button
                     onClick={onLogout}
-                    className="flex items-center space-x-1 text-sm text-gray-600 hover:text-red-600 transition-colors"
+                    className="flex items-center space-x-1 text-md font-semibold text-black hover:text-gray-900 transition-colors"
                 >
-                    <LogOut className="w-4 h-4" />
+                    <LogOut className="w-5 h-5" />
                     <span>Logout</span>
                 </button>
             </div>
@@ -214,9 +214,9 @@ function UserSection({
     return (
         <Link
             href="/login"
-            className="flex items-center space-x-2 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+            className="flex items-center space-x-2 text-md font-semibold text-black hover:text-black transition-colors"
         >
-            <User className="w-5 h-5" />
+            <User className="w-6 h-6" />
             <span>Login</span>
         </Link>
     );
@@ -236,9 +236,9 @@ function CartIcon() {
             className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"
             aria-label="Shopping cart"
         >
-            <ShoppingCart className="w-6 h-6 text-gray-600" />
+            <ShoppingCart className="w-6 h-6 text-black" />
             {!loading && itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-green-600 text-white text-xs flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-black text-white text-xs flex items-center justify-center">
                     {itemCount}
                 </span>
             )}
