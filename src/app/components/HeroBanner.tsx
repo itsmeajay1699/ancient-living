@@ -88,7 +88,7 @@ const HeroBanner: React.FC = () => {
 
                 <motion.div
                     variants={itemVariants}
-                    className="flex flex-col sm:flex-row items-center gap-6"
+                    className="flex flex-col sm:flex-row items-center md:gap-6 gap-10"
                 >
                     <motion.div whileHover={{ y: -4, scale: 1.05 }} transition={{ type: 'spring', stiffness: 300 }}>
                         <Link
