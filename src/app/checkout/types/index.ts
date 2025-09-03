@@ -21,7 +21,7 @@ export interface ShippingOption {
     amount?: number;
 }
 
-export type PaymentMethod = "razorpay" | "pp_system" | "manual" | "cod";
+export type PaymentMethod = "razorpay" | "pp_system" | "manual" | "cod" | "pp_system_default";
 
 export interface CartTotals {
     subtotal: string;

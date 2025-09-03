@@ -41,7 +41,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ cart, currency, totals }) =
                                 </div>
                             </div>
                             <div className="text-sm font-medium">
-                                {currency} {((item.quantity * item.unit_price || 0) / 100).toFixed(2)}
+                                {currency} {((item.quantity * Number(item.unit_price) || 0) / 100).toFixed(2)}
                             </div>
                         </div>
                     ))}
@@ -54,13 +54,13 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ cart, currency, totals }) =
             <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                     <span>Subtotal</span>
-                    <span>{currency} {totals.subtotal}</span>
+                    <span>{currency} {(Number(totals.subtotal) / 100).toFixed(2)}</span>
                 </div>
 
                 {cart?.shipping_total ? (
                     <div className="flex justify-between">
                         <span>Shipping</span>
-                        <span>{currency} {totals.shipping}</span>
+                        <span>{currency} {(Number(totals.shipping) / 100).toFixed(2)}</span>
                     </div>
                 ) : (
                     <div className="flex justify-between text-gray-500">
@@ -80,7 +80,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ cart, currency, totals }) =
 
                 <div className="flex justify-between font-semibold text-base">
                     <span>Total</span>
-                    <span>{currency} {totals.total}</span>
+                    <span>{currency} {(Number(totals.total) / 100).toFixed(2)}</span>
                 </div>
             </div>
         </div>

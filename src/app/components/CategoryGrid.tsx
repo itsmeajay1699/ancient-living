@@ -9,13 +9,17 @@ export default function CategoryGrid() {
     const { data, isLoading } = useQuery({
         queryKey: ["categories"],
         queryFn: () => medusa.productCategories.list({
-            limit: 10,
+            limit: 4,
         }),
     });
 
     const parentCategories = data?.product_categories?.filter(
         (cat: any) => !cat.parent_category_id
     );
+
+    if (!isLoading && (!parentCategories || parentCategories.length === 0)) {
+        return null
+    }
 
     return (
         <section id="categories" className="py-24 px-6 bg-stone-50">

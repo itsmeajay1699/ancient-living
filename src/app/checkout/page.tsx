@@ -52,7 +52,7 @@ export default function CheckoutPage() {
     const [selectedShippingOption, setSelectedShippingOption] = useState<string>("")
 
     // Payment state
-    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("manual")
+    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pp_system_default")
     const [isProcessing, setIsProcessing] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [orderId, setOrderId] = useState<string | null>(null)

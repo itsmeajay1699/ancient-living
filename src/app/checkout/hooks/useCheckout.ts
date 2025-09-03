@@ -35,7 +35,7 @@ export const useCheckout = () => {
     const [selectedShippingOption, setSelectedShippingOption] = useState("");
 
     // Payment
-    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("manual");
+    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pp_system_default");
     const [paymentSessions, setPaymentSessions] = useState<any[]>([]);
 
     // Order Processing

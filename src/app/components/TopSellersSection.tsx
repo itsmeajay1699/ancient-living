@@ -12,11 +12,10 @@ export default function TopSellersSection() {
         queryKey: ["top-sellers"],
         queryFn: async () => {
             const collectionsRes = await medusa.collections.list()
+            console.log(collectionsRes)
             const topSellers = collectionsRes.collections.find(
-                (c: any) => c.title.toLowerCase() === "top sellers"
+                (c: any) => c.title.toLowerCase() === "top seller"
             )
-
-            if (!topSellers) throw new Error("Top Sellers collection not found")
 
             const productsRes = await medusa.products.list({
                 collection_id: [topSellers.id],
@@ -26,6 +25,10 @@ export default function TopSellersSection() {
             return productsRes.products
         },
     })
+
+    if (!isLoading && (!data || data.length === 0)) {
+        return null
+    }
 
     return (
         <section id="top-sellers" className="py-24 px-6">
