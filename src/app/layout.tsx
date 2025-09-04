@@ -5,6 +5,7 @@ import { QueryProvider } from "@/provider/query-provider";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import { CartProvider } from "@/context/CartContext";
+import WhatsAppFloat from "@/components/WhatsAppFloat";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -34,6 +35,7 @@ export default function RootLayout({
             <Header />
             {children}
             <Footer />
+            <WhatsAppFloat />
           </QueryProvider>
         </CartProvider>
       </body>
