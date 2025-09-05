@@ -20,14 +20,14 @@ const CARDS: Card[] = [
         title: "Botanical Skincare",
         desc:
             "Skincare that’s gentle to your skin and powerful in results—infused with the quiet strength of nature to make you feel confident in your own skin.",
-        img: "https://botanicalbloom.in/images/Botanical-Skincare.svg",
+        img: "/first.png",
         href: "/collections/botanical-skincare",
     },
     {
         title: "Seasonal Gifting",
         desc:
             "Gifting becomes personal again with handpicked, customizable boxes made for moments that matter—because giving should always feel this thoughtful.",
-        img: "https://botanicalbloom.in/images/Seasonal-Gifting.svg",
+        img: "/second.png",
         href: "/collections/seasonal-gifting",
     },
 ]

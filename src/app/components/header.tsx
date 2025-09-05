@@ -110,8 +110,8 @@ export default function Header() {
                         {/* Logo */}
                         <Link href="/" className="flex items-center">
                             <img
-                                className="h-[57px] w-[171px] object-contain"
-                                src="https://botanicalbloom.in/images/logo.png"
+                                className="h-[80px] w-[140px] object-cover"
+                                src="/logo.png"
                                 alt="Ancient Living Logo"
                             />
                         </Link>

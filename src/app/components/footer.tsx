@@ -43,8 +43,8 @@ export default function Footer() {
                     <div>
                         <Link href="/" className="flex items-center">
                             <img
-                                className="h-[57px] w-[171px] object-contain"
-                                src="https://botanicalbloom.in/images/logo.png" alt="" />
+                                className="h-[80px] w-[140px] object-cover"
+                                src="/logo.png" alt="" />
                         </Link>
 
                         <div className="mt-3 text-[15px] leading-6 max-w-xs">
