@@ -9,27 +9,27 @@ import MaxContainer from "./MaxContainer";
 const testimonials = [
     {
         content: "Nice oil for massaging and after applying it on skin there's no need of using moisturizing cream.",
-        author: "SD",
+        author: "Sanjay Desai",
         rating: 5,
     },
     {
         content: "Absolutely love the fragrance and quality of this product.",
-        author: "RK",
+        author: "Ravi Kumar",
         rating: 5,
     },
     {
         content: "Great for daily skin care. Keeps skin soft and fresh.",
-        author: "NM",
+        author: "Neha Mehta",
         rating: 5,
     },
     {
         content: "Natural and non-sticky oil, very relaxing.",
-        author: "AK",
+        author: "Arjun Kapoor",
         rating: 5,
     },
     {
         content: "Love how it hydrates without any chemicals!",
-        author: "Misha",
+        author: "Misha Sharma",
         rating: 5,
     },
 ];

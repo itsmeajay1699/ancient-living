@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 import { Menu, ShoppingCart, User, LogOut } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { medusa, sdk } from "@/lib/medusa";
 import MaxContainer from "./MaxContainer";
 import { useCart } from "@/context/CartContext";
 import AnnouncementStrip from "@/components/AnnouncementStrip";
+import CategoryStrip from "@/components/CategoryStrip";
 
 interface Customer {
     id: string;
@@ -20,6 +22,10 @@ export default function Header() {
     const [customer, setCustomer] = useState<Customer | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const { associateWithCustomer } = useCart();
+    const pathname = usePathname();
+
+    // Check if we're on a product page
+    const isProductPage = pathname?.startsWith('/products');
 
     // Initialize customer from session and localStorage
     useEffect(() => {
@@ -104,7 +110,7 @@ export default function Header() {
 
     return (
         <>
-            <header className="bg-white">
+            <header className="bg-white relative z-50">
                 <MaxContainer>
                     <div className="flex items-center justify-between py-4">
                         {/* Logo */}
@@ -154,17 +160,20 @@ export default function Header() {
                 )}
             </header>
 
-            {/* Announcement Strip */}
-            <div className="sticky top-0 z-50 bg-white">
-                <AnnouncementStrip
-                    speed="medium"
-                    direction="left"
-                    backgroundColor="#F8F3EE"
-                    textColor="text-black"
-                    pauseOnHover={true}
-                    separator="•"
-                />
-            </div>
+            {/* Sticky Strips Container - Hide on Product Pages */}
+            {!isProductPage && (
+                <div className="sticky top-0 z-40 bg-white shadow-sm">
+                    <AnnouncementStrip
+                        speed="medium"
+                        direction="left"
+                        backgroundColor="#F8F3EE"
+                        textColor="text-black"
+                        pauseOnHover={true}
+                        separator="•"
+                    />
+                    <CategoryStrip />
+                </div>
+            )}
         </>
     );
 }
@@ -227,7 +236,8 @@ function CartIcon() {
     const { cart, loading } = useCart();
 
     const itemCount = cart?.items?.reduce(
-        (sum, item) => sum + (item.quantity || 0), 0
+        (sum: number, item: { quantity?: number }) => sum + (item.quantity || 0),
+        0
     ) || 0;
 
     return (

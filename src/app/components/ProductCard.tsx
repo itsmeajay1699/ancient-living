@@ -15,7 +15,7 @@ const ProductCard = ({ product }: any) => {
                                 src={thumbnail}
                                 alt={title || 'Product image'}
                                 fill
-                                className="object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                                className="object-fill object-center transition-transform duration-300 group-hover:scale-105"
                             />
                         )}
                     </div>

@@ -112,8 +112,8 @@ export default function ProductPage() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
                 <div className="grid md:grid-cols-2 gap-12 items-start">
                     {/* Image Gallery */}
-                    <div className="p-4 bg-white rounded-lg shadow-sm sticky top-24">
-                        <div className="w-full aspect-square relative overflow-hidden rounded-lg mb-4">
+                    <div className="p-4 bg-white rounded-lg shadow-sm sticky top-4">
+                        <div className="w-full h-[200px] md:aspect-square relative overflow-hidden rounded-lg mb-4">
                             {selectedImage ? (
                                 <Image
                                     src={selectedImage}
