@@ -162,15 +162,7 @@ export default function Header() {
 
             {/* Sticky Strips Container - Hide on Product Pages */}
             {!isProductPage && (
-                <div className="sticky top-0 z-40 bg-white shadow-sm">
-                    <AnnouncementStrip
-                        speed="medium"
-                        direction="left"
-                        backgroundColor="#F8F3EE"
-                        textColor="text-black"
-                        pauseOnHover={true}
-                        separator="•"
-                    />
+                <div className="sticky top-0 z- border-t bg-white shadow-sm">
                     <CategoryStrip />
                 </div>
             )}
