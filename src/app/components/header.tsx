@@ -162,7 +162,7 @@ export default function Header() {
 
             {/* Sticky Strips Container - Hide on Product Pages */}
             {!isProductPage && (
-                <div className="sticky top-0 z- border-t bg-white shadow-sm">
+                <div className="sticky top-0 z-40 border-t bg-white shadow-sm">
                     <CategoryStrip />
                 </div>
             )}
