@@ -3,7 +3,7 @@
 // Default region ID for the application
 // Change this value to update the region across the entire application
 // export const DEFAULT_REGION_ID = "reg_01K21EN3X2RN3R54Q2H7CFCNXR" // Old region ID (commented out)
-export const DEFAULT_REGION_ID = "reg_01K479G4HWBAC2GZ937846CBZN" // New region ID
+export const DEFAULT_REGION_ID = "reg_01K7KW356QD5VBVDKWQAAP1F9J" // New region ID
 
 // Other application constants
 export const CURRENCY_CODE = "INR"
